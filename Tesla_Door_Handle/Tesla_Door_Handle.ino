@@ -76,6 +76,12 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 int LEDstatus = 0;   //0 is off, 1 is locked, 2, is unlocked, 3 is rf read, 4 is motion detected
 int LastLEDstatus = 0; //store last led status
 
+//led timer definitions
+unsigned long previousMillis1 = 0;        // will store last time LED was updated
+// constants won't change:
+const long interval1 = 1000;           // interval at which to blink (milliseconds)
+
+
 
 //Global State Variables (these are used to update everyting globally)
 
@@ -207,7 +213,7 @@ void openHandle() {
   if (OutLimitStatus == 0) {
     Serial.println("Handle Opening");
     motor('R');// Turn motor on in opening direction
-    LEDstatus = 4; //handle is open, update leds
+    //LEDstatus = 4; //handle is open, update leds
   }
 
   if (OutLimitStatus == 1) {
@@ -425,7 +431,7 @@ void HandleIndicatorLEDs() {
 
 
   if (HandlePulledState == 1 && LastHandlePulledState == 0) {
-    LEDstatus = 3; //blue
+    LEDstatus = 2; //blue
     LastHandlePulledState = 1;
   }
 
@@ -433,18 +439,31 @@ void HandleIndicatorLEDs() {
     LastHandlePulledState = 0;
     LEDstatus = 0; //off
   }
-  
+
 }//end handleledindicators
 
-  void fill_grad() {
+void fill_grad() {
 
-    uint8_t starthue = beatsin8(5, 0, 255);
-    uint8_t endhue = beatsin8(7, 0, 255);
+  uint8_t starthue = beatsin8(5, 0, 255);
+  uint8_t endhue = beatsin8(7, 0, 255);
 
-    if (starthue < endhue) {
-      fill_gradient(leds, NUM_LEDS, CHSV(starthue, 255, 255), CHSV(endhue, 255, 255), FORWARD_HUES); // If we don't have this, the colour fill will flip around.
-    } else {
-      fill_gradient(leds, NUM_LEDS, CHSV(starthue, 255, 255), CHSV(endhue, 255, 255), BACKWARD_HUES);
-    }
+  if (starthue < endhue) {
+    fill_gradient(leds, NUM_LEDS, CHSV(starthue, 255, 255), CHSV(endhue, 255, 255), FORWARD_HUES); // If we don't have this, the colour fill will flip around.
+  } else {
+    fill_gradient(leds, NUM_LEDS, CHSV(starthue, 255, 255), CHSV(endhue, 255, 255), BACKWARD_HUES);
+  }
 
-  } // fill_grad()
+} // fill_grad()
+
+
+
+//void pulseColor(int r, int g, int b) {
+//  unsigned long currentMillis1 = millis();
+//  
+//
+//  if (currentMillis1 - previousMillis1 >= interval1) {
+//    // save the last time you blinked the LED
+//    previousMillis1 = currentMillis1;
+//   
+//  }
+//}
